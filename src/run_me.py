@@ -1,6 +1,6 @@
-# rag.py
+# run_me.py
 import os
-from business import DocumentHandler, MyMilvusRerankRetriever, Chat
+from doc_retriever_chat import DocumentHandler, MyMilvusRerankRetriever, Chat
 from vectordbs import MilvusDB
 from models import SentenceEmbeddingModel, RerankModel, ChatModel
 

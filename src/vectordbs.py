@@ -1,6 +1,3 @@
-"""
-向量数据库操作 CRUD
-"""
 from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection, utility
 from pymilvus import MilvusClient
 from typing import List
@@ -9,8 +6,7 @@ from typing import List
 class MilvusDB:
     INDEX_TYPE = 'HNSW'  # IVF_FLAT, HNSW
     METRIC_TYPE = 'COSINE'  # L2, IP, COSINE
-    # HOST = '8.134.144.124'    # 云服务器
-    HOST = '192.168.22.128'
+    HOST = '192.168.22.128'  # 改为你的向量数据库所在的ip地址
     PORT = 19530
 
     def __init__(self, host=HOST, port=PORT) -> None:
@@ -101,8 +97,6 @@ class MilvusDB:
         docs_result = []
         for hits in res:
             for hit in hits:
-                # print(hit.entity.document)
-                # print(hit.distance)
                 docs_result.append(hit.entity.document)
         return docs_result
 

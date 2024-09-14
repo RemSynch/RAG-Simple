@@ -1,0 +1,13 @@
+pymilvus
+transformers
+FlagEmbedding
+langchain
+langchain-core
+langchain_community
+langchain-milvus
+langchain-text-splitters
+pypdf2
+bs4
+modelscope
+peft
+pypdf

@@ -1,27 +1,16 @@
 from PIL import Image
-import torch
-from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
-from typing import List
-
-from vectordbs import MilvusDB
-from models import SentenceEmbeddingModel, RerankModel, ChatModel
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from typing import List, Any
 from vectordbs import MilvusDB
-from models import SentenceEmbeddingModel, RerankModel
+from models import SentenceEmbeddingModel, RerankModel,ChatModel
 from langchain_core.retrievers import BaseRetriever
 from langchain_core.callbacks.manager import CallbackManagerForRetrieverRun
-from langchain_community.chat_models import ChatOllama
-from langchain.chains.question_answering import load_qa_chain
-from langchain_core.prompts import PromptTemplate
 
 """
 文档处理
 """
-
-
 class DocumentHandler():
     DIM = 768  # 维度固定
 
@@ -38,8 +27,7 @@ class DocumentHandler():
         self.set_collection(collection_name)
         print(f"已创建并切换到集合: {collection_name}")
 
-    """从web端上传文件"""
-
+    """上传文件"""
     def upload_file(self, read_file_path: str, write_file_path: str) -> str:
         with open(read_file_path, 'rb') as r_file:
             content = r_file.read()
@@ -49,7 +37,6 @@ class DocumentHandler():
 
     """装载和切分文档"""
     """目前仅支持PDF、TXT"""
-
     def load_and_split(self, file_path: str) -> List[Document]:
         doc_list: List[Document]
 
@@ -92,14 +79,8 @@ class DocumentHandler():
         return nums
 
     """获取支持的doc列表"""
-
     def get_doc_file_list(self) -> List[str]:
         return self.vectordb.search_source(self.COLLECTION_NAME, self.DIM)
-
-
-"""
-定义检索类，检索、重排都在这里进行
-"""
 
 
 class MyMilvusRerankRetriever(BaseRetriever):

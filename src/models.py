@@ -12,42 +12,6 @@ from typing import List
 """
 句子embedding模型
 """
-
-
-# class SentenceEmbeddingModel():
-#     # MODEL_NAME = "moka-ai/m3e-base"
-#     MODEL_NAME = "../m3e-base"
-#     # MODEL_NAME = "../gte_sentence-embedding_multilingual-base"
-#     embeddings: HuggingFaceBgeEmbeddings
-#
-#     def __init__(self) -> None:
-#         print(f"初始化SentenceEmbedding模型：{self.MODEL_NAME}")
-#         # embedding model
-#         model_name = self.MODEL_NAME
-#         # model_kwargs = {'device': 'cpu'}
-#         # encode_kwargs = {'normalize_embeddings': True}
-#
-#         # 手动加载模型和tokenizer，加入trust_remote_code参数
-#
-#         embeddings = HuggingFaceBgeEmbeddings(
-#             model_name=model_name
-#             # model_kwargs=model_kwargs,
-#             # encode_kwargs=encode_kwargs
-#         )
-#         self.embeddings = embeddings
-#
-#     """embedding 单句"""
-#
-#     def embed_query(self, query: str) -> List[float]:
-#         key_feat = self.embeddings.embed_query(query)
-#         return key_feat
-#
-#     """embedding 一批句子"""
-#
-#     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-#         list_feat = self.embeddings.embed_documents(texts)
-#         return list_feat
-
 class SentenceEmbeddingModel():
     MODEL_NAME = "../gte_sentence-embedding_multilingual-base"
     model: AutoModel
@@ -62,7 +26,6 @@ class SentenceEmbeddingModel():
         self.model = AutoModel.from_pretrained(self.MODEL_NAME, trust_remote_code=True)
 
     """embedding 单句"""
-
     def embed_query(self, query: str) -> List[float]:
         # Tokenize输入文本
         inputs = self.tokenizer([query], max_length=8192, padding=True, truncation=True, return_tensors='pt')
@@ -81,7 +44,6 @@ class SentenceEmbeddingModel():
         return embeddings.squeeze().tolist()
 
     """embedding 一批句子"""
-
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         # Tokenize输入文本
         inputs = self.tokenizer(texts, max_length=8192, padding=True, truncation=True, return_tensors='pt')
@@ -101,32 +63,8 @@ class SentenceEmbeddingModel():
 
 
 """
-embedding重排序模型
+embedding Rerank重排序模型
 """
-
-
-# class RerankModel():
-#     # MODEL_NAME = 'BAAI/bge-reranker-base'
-#     MODEL_NAME = '../gte_passage-ranking_multilingual-base'
-#     reranker: FlagReranker
-#
-#     def __init__(self) -> None:
-#         print(f"初始化Rerank模型：{self.MODEL_NAME}")
-#         model_name = self.MODEL_NAME
-#         reranker = FlagReranker(model_name)
-#         self.reranker = reranker
-#
-#     """query跟一批句子做比较，返回相似度最高的 top_k 条"""
-#
-#     def rank(self, query: str, texts: List[str], top_k=3) -> List[str]:
-#         pairs = [[query, text] for text in texts]
-#         scores = self.reranker.compute_score(pairs)
-#         combined = list(zip(scores, pairs))
-#         sorted_combined = sorted(combined, reverse=True)
-#         sorted_pairs = [item[1] for item in sorted_combined]
-#         return sorted_pairs[:top_k]
-
-
 import torch
 from modelscope import AutoModelForSequenceClassification, AutoTokenizer
 
@@ -186,7 +124,7 @@ class ChatModel():
         inputs = inputs.to("cuda")  # 将输入数据移至GPU（如果可用）
 
         # 使用模型生成输出
-        output_ids = self.model.generate(**inputs, max_new_tokens=128)
+        output_ids = self.model.generate(**inputs, max_new_tokens=1024)
 
         # 解码生成的token为可读文本
         output_text = self.processor.batch_decode(output_ids, skip_special_tokens=True)
